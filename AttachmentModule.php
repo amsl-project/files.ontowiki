@@ -16,10 +16,12 @@
 class AttachmentModule extends OntoWiki_Module
 {
     /*
-     * An array of positive regexps to check the class URI of the resource
-     * (an empty array means, show always)
+     * The module has two options:
+     * 1. Enable the module according to the type of the selected resource or
+     * 2. Enable the module without checking types (default)
      */
-    private $_typeExpressions = array();
+    private $_types = array();
+    private $_useWithoutTypeCheck = true;
 
     /**
      * Constructor
@@ -28,8 +30,12 @@ class AttachmentModule extends OntoWiki_Module
     {
         $config = $this->_privateConfig;
 
-        if (isset($config->typeExpression)) {
-            $this->_typeExpressions = $config->typeExpression->toArray();
+        if (isset($config->useModuleWithoutTypeCheck)) {
+            $this->_useWithoutTypeCheck = (boolean)$config->useModuleWithoutTypeCheck;
+        }
+
+        if ($this->_useWithoutTypeCheck === false  && isset($config->enableForTypes)) {
+            $this->_types = $config->enableForTypes->toArray();
         }
 
     }
@@ -70,19 +76,22 @@ class AttachmentModule extends OntoWiki_Module
         $resource = $this->_owApp->selectedResource;
         $rModel   = $resource->getMemoryModel();
 
-        // no configured value means, show always
-        if (count($this->_typeExpressions) == 0) {
+        if ($this->_useWithoutTypeCheck === true) {
             return true;
         }
 
         // search with each expression using the preg matchtype
-        foreach ($this->_typeExpressions as $typeExpression) {
+        foreach ($this->_types as $type) {
+            if (isset($type['classUri'])) {
+                $classUri = $type['classUri'];
+            } else {
+                continue;
+            }
             if (
                 $rModel->hasSPvalue(
                     (string) $resource,
                     EF_RDF_TYPE,
-                    $typeExpression,
-                    'preg'
+                    $classUri
                 )
             ) {
                 return true;

@@ -11,7 +11,8 @@ addition to that, a file manager lists all existing files and you can
 
 This module allows for uploading / downloading and deletion of attached
 files on any resource. The module is visible only for resources of
-certain types (config option: `typeExpression`).
+certain types (config option: `useModuleWithoutTypeCheck` and 
+`useModuleWithoutTypeCheck).
 
 ![module status: download / deletion possible][download]
 

@@ -31,16 +31,20 @@
       owconfig:id "mime";
       :property <http://localhost/OntoWiki/Config/hasMimeType>
   ];
+  owconfig:config [
+      a owconfig:Config;
+      owconfig:id "enableForTypes";
+      owconfig:config [
+          a owconfig:Config;
+          owconfig:id "Document";
+          :classUri <http://xmlns.com/foaf/0.1/Document> ;
+      ]
+  ];
+  :useModuleWithoutTypeCheck "1" ;
   :class <http://localhost/OntoWiki/Config/File> ;
   :model <http://localhost/OntoWiki/Config/toModel> ;
   :DMS_NS <http://ns.aksw.org/DMS/> ;
   :import_DMS "1" .
-
-# not added yet
-#; show module at resources of these types (specified by preg expressions)
-#typeExpression[] = "/Document$/"
-#typeExpression[] = "/Image$/"
-#typeExpression[] = "/^http:\/\/www\.iana\.org\/assignments\/media-types\/.*/"
 
 # module
 :this owconfig:hasModule :Attachment .
