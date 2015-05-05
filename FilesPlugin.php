@@ -139,19 +139,19 @@ class FilesPlugin extends OntoWiki_Plugin
         $store->addStatement(
             (string)$this->_owApp->selectedModel,
             $fileUri,
-            'http://purl.org/dc/terms/created',
+            'http://vocab.ub.uni-leipzig.de/terms/uploadedDate',
             array('value' => date('c'), 'type' => 'literal', 'datatype' => EF_XSD_DATETIME)
         );
         $store->addStatement(
             (string)$this->_owApp->selectedModel,
             $fileUri,
-            'http://purl.org/dc/terms/creator',
+            'http://vocab.ub.uni-leipzig.de/terms/uploadedBy',
             array('value' => $this->_owApp->getUser()->getUri(), 'type' => 'uri')
         );
         $store->addStatement(
             (string)$this->_owApp->selectedModel,
             $fileUri,
-            'http://vocab.ub.uni-leipzig.de/linkToFile',
+            'http://vocab.ub.uni-leipzig.de/terms/linkToFile',
             array(
                 'value' => (string) $getUrl . '?setResource='. $fileUri,
                 'type' => 'literal'
