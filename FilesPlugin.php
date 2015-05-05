@@ -139,7 +139,7 @@ class FilesPlugin extends OntoWiki_Plugin
         $store->addStatement(
             (string)$this->_owApp->selectedModel,
             $fileUri,
-            'http://vocab.ub.uni-leipzig.de/terms/uploadedDate',
+            'http://vocab.ub.uni-leipzig.de/terms/uploadDate',
             array('value' => date('c'), 'type' => 'literal', 'datatype' => EF_XSD_DATETIME)
         );
         $store->addStatement(
