@@ -1,6 +1,8 @@
-File Manager;Dateiverwaltung
-Selection;Auswahl
+File Attachment;Dateianhang
+Currently, no file is attached to this resource.;Momentan hängt dieser Ressource keine Datei an.
+Selection;Auswahl											
 Resource URI;Ressourcen-URI
 Mime Type;Mime-Typ
-Upload File;Datei hochladen
+Upload File;Datei hochladen	
 Directory \"%s\" is not writeable. To upload files set it writable.;Verzeichnis \"%s\" ist schreibgeschützt. Um Dateien hochzuladen Verzeichnis schreibbar machen.
+Uploads folder is not writable.;Das Upload-Verzeichnis ist schreibgeschützt.
