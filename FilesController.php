@@ -63,6 +63,13 @@ class FilesController extends OntoWiki_Controller_Component
             'http://vocab.ub.uni-leipzig.de/terms/uploadDate',
             null
         );
+        // remove link to file statements from selected model
+        $store->deleteMatchingStatements(
+            (string)$this->_owApp->selectedModel,
+            $fileResource,
+            'http://vocab.ub.uni-leipzig.de/terms/linkToFile',
+            null
+        );
     }
 
     /**

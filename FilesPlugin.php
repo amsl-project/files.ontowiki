@@ -121,6 +121,14 @@ class FilesPlugin extends OntoWiki_Plugin
             }
         }
 
+        $getUrl  = new OntoWiki_Url(
+            array(
+                'controller' => 'files',
+                'action' => 'get'
+            ),
+            array()
+        );
+
         // add file resource as instance in local model
         $store->addStatement(
             (string)$this->_owApp->selectedModel,
@@ -128,22 +136,26 @@ class FilesPlugin extends OntoWiki_Plugin
             EF_RDF_TYPE,
             array('value' => $fileClassLocal, 'type' => 'uri')
         );
-        // add uploader
-        $user = $this->_owApp->getUser()->getUri();
-        $store->addStatement(
-            (string)$this->_owApp->selectedModel,
-            $fileUri,
-            'http://vocab.ub.uni-leipzig.de/terms/uploadedBy',
-            array('value' => $user, 'type' => 'uri'),
-            false
-        );
-        // add uploadtime
         $store->addStatement(
             (string)$this->_owApp->selectedModel,
             $fileUri,
             'http://vocab.ub.uni-leipzig.de/terms/uploadDate',
-            array('value' => date('Y-m-d\TH:i:s\Z'), 'type' => 'xsd:dateTime'),
-            false
+            array('value' => date('c'), 'type' => 'literal', 'datatype' => EF_XSD_DATETIME)
+        );
+        $store->addStatement(
+            (string)$this->_owApp->selectedModel,
+            $fileUri,
+            'http://vocab.ub.uni-leipzig.de/terms/uploadedBy',
+            array('value' => $this->_owApp->getUser()->getUri(), 'type' => 'uri')
+        );
+        $store->addStatement(
+            (string)$this->_owApp->selectedModel,
+            $fileUri,
+            'http://vocab.ub.uni-leipzig.de/terms/linkToFile',
+            array(
+                'value' => (string) $getUrl . '?setResource='. $fileUri,
+                'type' => 'literal'
+            )
         );
         // add file resource as instance in system model
         $store->addStatement(
