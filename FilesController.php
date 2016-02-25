@@ -48,6 +48,21 @@ class FilesController extends OntoWiki_Controller_Component
             null,
             null
         );
+
+        // remove uploadedBy  statements from selected model
+        $store->deleteMatchingStatements(
+            (string)$this->_owApp->selectedModel,
+            $fileResource,
+            'http://vocab.ub.uni-leipzig.de/terms/uploadedBy',
+            null
+        );
+        // remove upload date statements from selected model
+        $store->deleteMatchingStatements(
+            (string)$this->_owApp->selectedModel,
+            $fileResource,
+            'http://vocab.ub.uni-leipzig.de/terms/uploadDate',
+            null
+        );
     }
 
     /**
