@@ -385,5 +385,54 @@ class FilesController extends OntoWiki_Controller_Component
         }
         return $mimeType;
     }
-}
 
+    /**
+     * Deletes all files that are not referenced by a resource.
+     * This function is intended to be used as a service by the chronjob extension.
+     * it does not return a page.
+     */
+    public function deleteunreferencedfilesAction(){
+        // get all models as we do  not know where resources with associated files are located
+        $models = $this->_owApp->erfurt->getStore()->getBackendAdapter()->getAvailableModels();
+        // get all files from the upload folder
+        $files = array();
+        $path = $this->_privateConfig->toArray()['path'];
+        if ($handle = opendir($path)) {
+            while (false !== ($entry = readdir($handle))) {
+                if ($entry != "." && $entry != "..") {
+                    $files[] = $entry;
+                }
+            }
+            closedir($handle);
+        }
+        // initialize backend
+        $options = $this->_owApp->getConfig()->toArray()['store']['virtuoso'];
+        $options['is_open_source_version'] = '1';
+        $backend = new Erfurt_Store_Adapter_Virtuoso($options);
+        $backend->init();
+        // prepare and execute query (use all models)
+        $from = '';
+        foreach($models as $model){
+            $from = $from .  ' FROM <' . $model['modelIri'] . '>' . PHP_EOL;
+        }
+        $query = 'select distinct ?subject '. $from .' where {?subject a <http://xmlns.com/foaf/0.1/Document> . ?subject <http://vocab.ub.uni-leipzig.de/terms/linkToFile> ?ignore}';
+        $query_results = $backend->sparqlQuery($query);
+        // extract resource hashes from resources
+        $ressourcHashes = array();
+        foreach($query_results as $resultSet){
+            $file = $resultSet['subject'];
+            $parts = explode("/", $this->getFullPath($file));
+            $ressourcHashes[] = $parts[(count($parts) - 1)];
+        }
+        // compare file names with resource hashes
+        foreach($files as $file){
+            if(!in_array($file, $ressourcHashes)){
+                // delete file if not linked by a resource
+                unlink(_OWROOT . $path . DIRECTORY_SEPARATOR . $file);
+            }
+        }
+        $this->getHelper('Layout')->disableLayout();
+        $this->getHelper('ViewRenderer')->setNoRender();
+        return true;
+    }
+}
