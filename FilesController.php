@@ -163,21 +163,21 @@ class FilesController extends OntoWiki_Controller_Component
                     ?uri <' . $mimeProperty . '> ?mime_type.
                 }'
             )
-            ->setOrderClause('?uri')
-            ->setLimit(10); // TODO: paging
-
+            ->setOrderClause('?uri');
+        $files = array();
         if ($result = $store->sparqlQuery($query, array('use_ac' => false))) {
-            $files = array();
+            $titleHelper = new OntoWiki_Model_TitleHelper($this->_owApp->selectedModel);
+
             foreach ($result as $row) {
                 if (is_readable($this->getFullPath($row['uri']))) {
+                    $subjectTitle = $titleHelper->getTitle($row['uri']);
+                    $row['title'] = $subjectTitle;
                     array_push($files, $row);
                 }
             }
-            $this->view->files = $files;
-        } else {
-            $this->view->files = array();
         }
-
+        usort($files, array('FilesController', 'cmp'));
+        $this->view->files = $files;
         $this->view->placeholder('main.window.title')->set($this->_owApp->translate->_('File Manager'));
         OntoWiki::getInstance()->getNavigation()->disableNavigation();
 
@@ -224,6 +224,11 @@ class FilesController extends OntoWiki_Controller_Component
         $this->view->formMethod    = 'post';
         $this->view->formClass     = 'simple-input input-justify-left';
         $this->view->formName      = 'filemanagement-delete';
+    }
+
+    private function cmp($a, $b)
+    {
+        return strcasecmp ( $a['title'] , $b['title'] );
     }
 
     /**
