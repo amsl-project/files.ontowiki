@@ -33,7 +33,10 @@ $getUrl  = new OntoWiki_Url(
 $getUrl = (string) $getUrl . '?setResource='.$this->file_uri;
 
 $mimeType = $this->mimeType;
+
+$urlBase = OntoWiki::getInstance()->getUrlBase();
 ?>
+<script type="text/javascript" src="<?php echo ($urlBase . 'extensions/files/scripts/deleteFileConfirmation.js')?>"></script>
 <div class="messagebox info has-contextmenu-area">
     <p><?php echo $this->_('There is an attached file document on this resource') ?></p>
     <p>
@@ -50,7 +53,7 @@ $mimeType = $this->mimeType;
         </a>
         <a
             href="<?php echo $deleteUrl ?>"
-            class="item">
+            class="item delete-item-atag" name="<?php echo $this->_('Are you sure to delete this attachement?') ?>">
             <span class="icon icon-delete" title="<?php echo $this->_('Delete Attachment') ?>">
                 <span><?php echo $this->_('Delete Attachment') ?></span>
             </span>
