@@ -176,6 +176,14 @@ class FilesController extends OntoWiki_Controller_Component
                 }
             }
         }
+        $correctedFiles = array();
+        foreach ($files as $file) {
+            $url = new OntoWiki_Url(array('route' => 'properties'), array('r'));
+            $url->setParam('r', $file['uri'], true);
+            $file['uri'] = (string)$url;
+            $correctedFiles[] = $file;
+        }
+        $files = $correctedFiles;
         usort($files, array('FilesController', 'cmp'));
         $this->view->files = $files;
         $this->view->placeholder('main.window.title')->set($this->_owApp->translate->_('File Manager'));
