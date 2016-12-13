@@ -132,10 +132,17 @@ class FilesController extends OntoWiki_Controller_Component
             // application/octet-stream
             $mimeType = 'application/octet-stream';
         }
-
+        $extensions = array(
+            'image/jpeg' => 'jpeg',
+            'text/xml' => 'xml',
+            'application/pdf' => 'pdf'
+        );
+        $extension = $extensions[$mimeType];
+        $resourceName = end(explode("/", $fileUri));
         // TODO: generate a proper file name here
         $response = $this->getResponse();
         $response->setRawHeader('Content-Type:' . $mimeType);
+        $response->setRawHeader('Content-Disposition: attachment; filename= ' . $resourceName . "." . $extension);
         $pathHashed = $this->getFullPath($fileUri);
         if (is_readable($pathHashed)) {
             $response->setBody(file_get_contents($pathHashed));
