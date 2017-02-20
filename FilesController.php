@@ -135,7 +135,8 @@ class FilesController extends OntoWiki_Controller_Component
         $extensions = array(
             'image/jpeg' => 'jpeg',
             'text/xml' => 'xml',
-            'application/pdf' => 'pdf'
+            'application/pdf' => 'pdf',
+            'application/zip' => 'zip'
         );
         $extension = $extensions[$mimeType];
         $resourceName = end(explode("/", $fileUri));
@@ -145,6 +146,8 @@ class FilesController extends OntoWiki_Controller_Component
         $response->setRawHeader('Content-Disposition: attachment; filename= ' . $resourceName . "." . $extension);
         $pathHashed = $this->getFullPath($fileUri);
         if (is_readable($pathHashed)) {
+            $tsstring = gmdate('D, d M Y H:i:s ', filemtime($pathHashed)) . 'GMT';
+            $response->setRawHeader('Last-Modified: ' . $tsstring);
             $response->setBody(file_get_contents($pathHashed));
         }
     }
