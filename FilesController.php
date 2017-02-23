@@ -132,23 +132,28 @@ class FilesController extends OntoWiki_Controller_Component
             // application/octet-stream
             $mimeType = 'application/octet-stream';
         }
+        
         $extensions = array(
             'image/jpeg' => 'jpeg',
             'text/xml' => 'xml',
             'application/pdf' => 'pdf',
             'application/zip' => 'zip'
         );
-        $extension = $extensions[$mimeType];
-        $resourceName = end(explode("/", $fileUri));
-        // TODO: generate a proper file name here
+        $extension = isset($extensions[$mimeType]) ? $extensions[$mimeType] : "";
+        
+        $splitFileUri = explode("/", $fileUri);
+        $resourceName = end($splitFileUri);
+        
         $response = $this->getResponse();
-        $response->setRawHeader('Content-Type:' . $mimeType);
-        $response->setRawHeader('Content-Disposition: attachment; filename= ' . $resourceName . "." . $extension);
         $pathHashed = $this->getFullPath($fileUri);
         if (is_readable($pathHashed)) {
+            $response->setRawHeader('Content-Type:' . $mimeType);
+            $response->setRawHeader('Content-Disposition: attachment; filename= ' . $resourceName . "." . $extension);
             $tsstring = gmdate('D, d M Y H:i:s ', filemtime($pathHashed)) . 'GMT';
             $response->setRawHeader('Last-Modified: ' . $tsstring);
             $response->setBody(file_get_contents($pathHashed));
+        } else {
+            $this->_owApp->appendMessage(new OntoWiki_Message('Error reading file.', OntoWiki_Message::ERROR));
         }
     }
 
