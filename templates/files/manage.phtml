@@ -24,7 +24,12 @@
                 <input type="checkbox" id="selector-<?php echo ++$i ?>" name="selectedFiles[]" value="<?php echo rawurlencode($file['uri']) ?>">
             </td>
             <td class="enumeration"><label for="selector-<?php echo $i ?>"><?php echo $i ?>.</label></td>
-            <td><a href="<?php echo $file['uri'] ?>"><?php echo $file['title'] ?></a></td>
+            <td><a href="
+            <?php 
+                $url = new OntoWiki_Url(array('route' => 'properties'), array('r'));
+                $url->setParam('r', $file['uri'], true);
+                echo $url->__toString()
+            ?>"><?php echo $file['title'] ?></a></td>
             <td><?php echo $file['mime_type'] ?></td>
         </tr>
     <?php endforeach; ?>
